@@ -2,87 +2,35 @@
 
 declare(strict_types = 1);
 
+use Illuminate\Support\Facades\App;
+
 return [
     'route' => [
-        // The prefix for routes; do NOT use a leading slash!
         'prefix' => 'graphql',
-
-        // The controller/method to use in GraphQL request.
-        // Also supported array syntax: `[\Rebing\GraphQL\GraphQLController::class, 'query']`
         'controller' => \Rebing\GraphQL\GraphQLController::class . '@query',
-
-        // Any middleware for the graphql route group
-        // This middleware will apply to all schemas
         'middleware' => [],
-
-        // Additional route group attributes
-        //
-        // Example:
-        //
-        // 'group_attributes' => ['guard' => 'api']
-        //
         'group_attributes' => [],
     ],
-
-    // The name of the default schema
-    // Used when the route group is directly accessed
     'default_schema' => 'default',
-
     'batching' => [
-        // Whether to support GraphQL batching or not.
-        // See e.g. https://www.apollographql.com/blog/batching-client-graphql-queries-a685f5bcd41b/
-        // for pro and con
         'enable' => true,
     ],
 
-    // The schemas for query and/or mutation. It expects an array of schemas to provide
-    // both the 'query' fields and the 'mutation' fields.
-    //
-    // You can also provide a middleware that will only apply to the given schema
-    //
-    // Example:
-    //
-    //  'schemas' => [
-    //      'default' => [
-    //          'controller' => MyController::class . '@method',
-    //          'query' => [
-    //              App\GraphQL\Queries\UsersQuery::class,
-    //          ],
-    //          'mutation' => [
-    //
-    //          ]
-    //      ],
-    //      'user' => [
-    //          'query' => [
-    //              App\GraphQL\Queries\ProfileQuery::class,
-    //          ],
-    //          'mutation' => [
-    //
-    //          ],
-    //          'middleware' => ['auth'],
-    //      ],
-    //      'user/me' => [
-    //          'query' => [
-    //              App\GraphQL\Queries\MyProfileQuery::class,
-    //          ],
-    //          'mutation' => [
-    //
-    //          ],
-    //          'middleware' => ['auth'],
-    //      ],
-    //  ]
-    //
+    
     'schemas' => [
         'default' => [
             'query' => [
-                // ExampleQuery::class,
+                'users' => \App\GraphQL\Queries\User\UsersQuery::class,
             ],
             'mutation' => [
-                // ExampleMutation::class,
+                'register' => \App\GraphQL\Mutations\User\RegisterMutation::class,
+                'login' => \App\GraphQL\Mutations\User\LoginMutation::class,
             ],
             // The types only available in this schema
             'types' => [
-                // ExampleType::class,
+                'UserData' => \App\GraphQL\Inputs\UserDataInput::class,
+
+                'User' => \App\GraphQL\Types\UserType::class,
             ],
 
             // Laravel HTTP middleware
@@ -96,19 +44,10 @@ return [
         ],
     ],
 
-    // The global types available to all schemas.
-    // You can then access it from the facade like this: GraphQL::type('user')
-    //
-    // Example:
-    //
-    // 'types' => [
-    //     App\GraphQL\Types\UserType::class
-    // ]
-    //
     'types' => [
-        // ExampleType::class,
-        // ExampleRelationType::class,
-        // \Rebing\GraphQL\Support\UploadType::class,
+        'UserData' => \App\GraphQL\Inputs\UserDataInput::class,
+
+        'User' => \App\GraphQL\Types\UserType::class,
     ],
 
     // This callable will be passed the Error object for each errors GraphQL catch.
