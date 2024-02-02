@@ -20,7 +20,7 @@ class LoginMutation extends Mutation
 
     public function type(): Type
     {
-        return Type::listOf(Type::string());
+        return Type::string();
     }
 
     public function args(): array
@@ -31,7 +31,7 @@ class LoginMutation extends Mutation
               'type' => Type::nonNull(Type::string()),
               'rules' => ['required', 'email'],
             ],
-            'passoword' => [
+            'password' => [
               'name' => 'password',
               'type' => Type::nonNull(Type::string()),
               'rules' => ['required'],

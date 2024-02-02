@@ -25,6 +25,7 @@ return [
             'mutation' => [
                 'register' => \App\GraphQL\Mutations\User\RegisterMutation::class,
                 'login' => \App\GraphQL\Mutations\User\LoginMutation::class,
+                'logout' => \App\GraphQL\Mutations\User\LogoutMutation::class,
             ],
             // The types only available in this schema
             'types' => [
