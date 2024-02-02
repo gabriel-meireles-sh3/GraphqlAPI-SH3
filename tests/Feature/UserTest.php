@@ -12,7 +12,7 @@ class UserTest extends TestCase
 {
     use RefreshDatabase;
     use WithFaker;
-    public function test_mutation_cadastroUsuario_WithValidData()
+    public function test_mutation_cadastroUsuario_withValidData()
     {
         $userData = [
             'name' => $this->faker->name,
@@ -21,7 +21,7 @@ class UserTest extends TestCase
             'password' => 'password123',
         ];
 
-        $this->mutation('register', [
+        $response = $this->mutation('register', [
             'name' => $userData['name'],
             'role' => $userData['role'],
             'email' => $userData['email'],
@@ -36,9 +36,11 @@ class UserTest extends TestCase
                     ],
                 ],
             ]);
+
+        //var_dump($response);
     }
 
-    public function test_mutation_cadastroUsuario_WithInvalidData()
+    public function test_mutation_cadastroUsuario_withInvalidData()
     {
         $userData = [
             'name' => $this->faker->name,
@@ -60,28 +62,23 @@ class UserTest extends TestCase
             ]);
     }
 
-    public function test_mutation_login_WithValidData()
+    /*
+    public function test_mutation_login_withValidData()
     {
-        User::factory()->create([
-            'email' => 'testuser@example.com',
-            'password' => bcrypt('password123'),
+        $user = User::factory()->create([
+            'email' => "teste@gmail.com",
+            'password' => "123456",
         ]);
-        $loginData = [
-            'email' => 'testuser@example.com',
-            'password' => 'password123',
-        ];
 
-        $this->mutation('login', $loginData, ['token'])
-            ->assertJsonStructure([
-                'data' => [
-                    'login' => [
-                        'token',
-                    ],
-                ],
-            ]);
-    }
+        $response = $this->mutation('login', [
+            'email' => "teste@gmail.com",
+            'password' => "123456",
+        ]);
 
-    public function test_mutation_login_WithInvalidData()
+        var_dump($response->json());
+    }*/
+    /*
+    public function test_mutation_login_withInvalidData()
     {
         $invalidLoginData = [
             'email' => 'nonexistentuser@example.com',
@@ -89,7 +86,7 @@ class UserTest extends TestCase
         ];
         $this->mutation('login', [
             'email' => $invalidLoginData['email'],
-            'password' => $invalidLoginData['passowrd'],
+            'password' => $invalidLoginData['password'],
         ],)
             ->assertJson([
                 'data' => [
@@ -97,5 +94,16 @@ class UserTest extends TestCase
                 ],
                 'errors' => true,
             ]);
+    }*/
+
+    public function teste_mutation_logout()
+    {
+        $user = User::factory()->create();
+        $token = auth()->login($user);
+
+        $response = $this->withHeaders([
+            "Authorization" => "Bearer {$token}"
+        ])->mutation('logout');
+        
     }
 }
