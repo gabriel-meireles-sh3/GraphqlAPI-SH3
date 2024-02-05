@@ -25,9 +25,17 @@ return [
                 'allSuport' => \App\GraphQL\Queries\User\AllSuportQuery::class,
             ],
             'mutation' => [
+                // User
                 'register' => \App\GraphQL\Mutations\User\RegisterMutation::class,
                 'login' => \App\GraphQL\Mutations\User\LoginMutation::class,
                 'logout' => \App\GraphQL\Mutations\User\LogoutMutation::class,
+
+                // Ticket
+                'createTicket' => \App\GraphQL\Mutations\Ticket\createTicketMutation::class,
+                'removeTicket' => \App\GraphQL\Mutations\Ticket\removeTicketMutation::class,
+                'restoreTicket' => \App\GraphQL\Mutations\Ticket\restoreTicketMutation::class,
+                'updateTicket' => \App\GraphQL\Mutations\Ticket\updateTicketMutation::class,
+
             ],
             // The types only available in this schema
             'types' => [
@@ -52,6 +60,8 @@ return [
 
         'User' => \App\GraphQL\Types\UserType::class,
         'ServiceAreas' => \App\GraphQL\Types\ServiceAreasType::class,
+
+        'Ticket' => \App\GraphQL\Types\TicketType::class,
     ],
 
     // This callable will be passed the Error object for each errors GraphQL catch.
