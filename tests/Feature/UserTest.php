@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\ServiceAreas;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -36,8 +37,6 @@ class UserTest extends TestCase
                     ],
                 ],
             ]);
-
-        //var_dump($response);
     }
 
     public function test_mutation_cadastroUsuario_withInvalidData()
@@ -101,9 +100,58 @@ class UserTest extends TestCase
         $user = User::factory()->create();
         $token = auth()->login($user);
 
-        $response = $this->withHeaders([
+        $this->withHeaders([
             "Authorization" => "Bearer {$token}"
         ])->mutation('logout');
+    }
+
+    public function teste_query_users()
+    {
+        $user = User::factory()->create();
+        $token  = auth()->login($user);
+
+        User::factory(3)->create(['name' => 'teste']);
+
+        $this->withHeaders(["Authorization" => "Bearer {$token}"])
+            ->query('users', ['name' => 'teste'], ['id', 'name', 'role', 'email'])
+            ->assertJson([
+                'data' => [
+                    "users" => true,
+                ],
+            ]);
+    }
+
+    public function teste_query_user()
+    {
+        $user = User::factory()->create();
+        $token  = auth()->login($user);
+
+        $this->withHeaders(["Authorization" => "Bearer {$token}"])
+            ->query('user', ['id' => $user->id], ['id', 'name', 'role', 'email'])
+            ->assertJson([
+                'data' => [
+                    "user" => true,
+                ],
+            ]);
+    }
+
+    public function teste_query_AllSupport()
+    {
+        $user = User::factory()->create();
+        $token = auth()->login($user);
+
+        $supportUser = User::factory()->create(['role' => '3']);
+        $this->assertNotNull($supportUser->id);
         
+        $service_area = ServiceAreas::factory()->create(['user_id' => $supportUser->id]);
+        $this->assertNotNull($service_area->user_id);
+
+        $this->withHeaders(["Authorization" => "Bearer {$token}"])
+            ->query('allSuport', ['id', 'name', 'role', 'service_areas' => ['service_area']])
+            ->assertJson([
+                'data' => [
+                    "allSuport" => true,
+                ],
+            ]);
     }
 }
