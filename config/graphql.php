@@ -21,6 +21,8 @@ return [
         'default' => [
             'query' => [
                 'users' => \App\GraphQL\Queries\User\UsersQuery::class,
+                'user' => \App\GraphQL\Queries\User\UserQuery::class,
+                'allSuport' => \App\GraphQL\Queries\User\AllSuportQuery::class,
             ],
             'mutation' => [
                 'register' => \App\GraphQL\Mutations\User\RegisterMutation::class,
@@ -49,6 +51,7 @@ return [
         'UserData' => \App\GraphQL\Inputs\UserDataInput::class,
 
         'User' => \App\GraphQL\Types\UserType::class,
+        'ServiceAreas' => \App\GraphQL\Types\ServiceAreasType::class,
     ],
 
     // This callable will be passed the Error object for each errors GraphQL catch.

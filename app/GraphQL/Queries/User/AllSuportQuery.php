@@ -14,20 +14,21 @@ use Rebing\GraphQL\Support\SelectFields;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class UsersQuery extends Query
+class AllSuportQuery extends Query
 {
     public function authorize($root, array $args, $ctx, ?ResolveInfo $resolveInfo = null, ?Closure $getSelectFields = null): bool
     {
-        try{
+        try {
             $this->auth = JWTAuth::parseToken()->authenticate();
-        } catch(JWTException $e){
+        } catch (JWTException $e) {
             return false;
         }
         return (bool) $this->auth;
     }
-    
+
     protected $attributes = [
-        'name' => 'user/Users',
+        'name' => 'user/AllSuport',
+        'description' => 'A query'
     ];
 
     public function type(): Type
@@ -35,25 +36,12 @@ class UsersQuery extends Query
         return Type::listOf(GraphQL::type('User'));
     }
 
-    public function args(): array
-    {
-        return [
-            'name' => [
-                'name' => 'name',
-                'description' => 'Pesquisa por nome de usuario',
-                'type' => Type::string(),
-                'defaultValue' => '',
-            ],
-
-        ];
-    }
-
-
     public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
     {
         $query = User::query();
+        $query->where('role', User::ROLE_SUPPORT);
 
-        $query->where('name', 'like', "%{$args['name']}%");
+        //dd($query->get());
 
         return $query->get();
     }
