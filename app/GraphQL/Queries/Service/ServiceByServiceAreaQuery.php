@@ -14,20 +14,20 @@ use Rebing\GraphQL\Support\SelectFields;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class ServicesQuery extends Query
+class ServiceByServiceAreaQuery extends Query
 {
     public function authorize($root, array $args, $ctx, ?ResolveInfo $resolveInfo = null, ?Closure $getSelectFields = null): bool
     {
-        try{
+        try {
             $this->auth = JWTAuth::parseToken()->authenticate();
-        } catch(JWTException $e){
+        } catch (JWTException $e) {
             return false;
         }
         return (bool) $this->auth;
     }
 
     protected $attributes = [
-        'name' => 'service/Services',
+        'name' => 'service/serviceByServiceArea',
         'description' => 'A query'
     ];
 
@@ -38,15 +38,13 @@ class ServicesQuery extends Query
 
     public function args(): array
     {
-        return [
-
-        ];
+        return [];
     }
 
     public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
     {
-        $services = Service::all();
+        $services_areas = Service::select('service_area')->get();
 
-        return $services;
+        return $services_areas;
     }
 }

@@ -40,6 +40,14 @@ class ServiceType extends GraphQLType
                 'type' => Type::nonNull(Type::string()),
                 'description' => 'O ID do usuário analista de suporte que atende a ordem'
             ],
+            'status' => [
+                'type' => Type::nonNull(Type::boolean()),
+                'description' => 'O status do serviço (false => em andamento | true => finalizado)',
+            ],
+            'service' => [
+                'type' => Type::nonNull(Type::string()),
+                'description' => 'O serviço que o usuário analista de suporte executou'
+            ],
             'ticket' => [
                 'type' => Type::listOf(GraphQL::type('Ticket')),
                 'description' => 'Ticket associado ao serviço (suporte)',

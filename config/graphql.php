@@ -32,6 +32,12 @@ return [
                 // Service
                 'services' => \App\GraphQL\Queries\Service\ServicesQuery::class,
                 'service' => \App\GraphQL\Queries\Service\ServiceQuery::class,
+                'servicesBySupportId' => \App\GraphQL\Queries\Service\ServicesBySupportIdQuery::class,
+                'servicesByTicketId' => \App\GraphQL\Queries\Service\ServicesByTicketIdQuery::class,
+                'servicesAreas' => \App\GraphQL\Queries\Service\ServiceByServiceAreaQuery::class,
+                'servicesTypes' => \App\GraphQL\Queries\Service\ServiceByServiceTypeQuery::class,
+                'servicesUnassociated' => \App\GraphQL\Queries\Service\ServiceUnassociatedQuery::class,
+                'servicesIncomplete' => \App\GraphQL\Queries\Service\ServiceIncompleteQuery::class,
             ],
             'mutation' => [
                 // User
@@ -50,6 +56,8 @@ return [
                 'removeService' => \App\GraphQL\Mutations\Service\removeServiceMutation::class,
                 'restoreService' => \App\GraphQL\Mutations\Service\restoreServiceMutation::class,
                 'updateService' => \App\GraphQL\Mutations\Service\updateServiceMutation::class,
+                'associateService' => \App\GraphQL\Mutations\Service\associateServiceMutation::class,
+                'unassociateService' => \App\GraphQL\Mutations\Service\completeServiceMutation::class,
             ],
             // The types only available in this schema
             'types' => [

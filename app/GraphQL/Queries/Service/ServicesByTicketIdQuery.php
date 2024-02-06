@@ -14,7 +14,7 @@ use Rebing\GraphQL\Support\SelectFields;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class ServicesQuery extends Query
+class ServicesByTicketIdQuery extends Query
 {
     public function authorize($root, array $args, $ctx, ?ResolveInfo $resolveInfo = null, ?Closure $getSelectFields = null): bool
     {
@@ -27,7 +27,7 @@ class ServicesQuery extends Query
     }
 
     protected $attributes = [
-        'name' => 'service/Services',
+        'name' => 'service/ServicesByTicketId',
         'description' => 'A query'
     ];
 
@@ -39,13 +39,17 @@ class ServicesQuery extends Query
     public function args(): array
     {
         return [
-
+            'ticket_id' => [
+                'name' => 'ticket_id',
+                'type' => Type::int(),
+                'rules' => ['required']
+            ]
         ];
     }
 
     public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
     {
-        $services = Service::all();
+        $services = Service::where('client_id', $args['ticket_id'])->get();
 
         return $services;
     }
