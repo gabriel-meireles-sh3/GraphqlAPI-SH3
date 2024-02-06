@@ -97,4 +97,38 @@ class TicketTest extends TestCase
             ]
         ]);
     }
+
+    public function test_query_tickets()
+    {
+        $user = User::factory()->create();
+        $token = auth()->login($user);
+
+        $ticket = Ticket::factory(5)->create();
+
+        $this->withHeaders(["Authorization" => "Bearer {$token}"])
+        ->query('tickets', [], ['id', 'name', 'client', 'occupation_area'])
+        ->assertJson([
+            'data' => [
+                "tickets" => true,
+            ]
+        ]);
+    }
+
+    public function test_query_ticket()
+    {
+        $user = User::factory()->create();
+        $token = auth()->login($user);
+
+        $ticket = Ticket::factory(5)->create();
+        $randomTicket = $ticket->random();
+        $id = $randomTicket->id;
+
+        $this->withHeaders(["Authorization" => "Bearer {$token}"])
+        ->query('ticket', ['id' => $id], ['id', 'name', 'client', 'occupation_area'])
+        ->assertJson([
+            'data' => [
+                "ticket" => true,
+            ]
+        ]);
+    }
 }
