@@ -30,6 +30,7 @@ class ServiceFactory extends Factory
             'client_id' => $this->faker->randomElement($clientIds),
             'service_area' => $this->faker->word,
             'support_id' => $this->faker->randomElement($supportIds),
+            'status' => false,
         ];
     }
 }

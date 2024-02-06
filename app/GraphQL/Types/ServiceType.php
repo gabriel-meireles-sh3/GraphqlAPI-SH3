@@ -37,7 +37,7 @@ class ServiceType extends GraphQLType
                 'description' => 'A área de atendimento que o serviço requer'
             ],
             'support_id' => [
-                'type' => Type::nonNull(Type::string()),
+                'type' => Type::string(),
                 'description' => 'O ID do usuário analista de suporte que atende a ordem'
             ],
             'status' => [
@@ -49,7 +49,7 @@ class ServiceType extends GraphQLType
                 'description' => 'O serviço que o usuário analista de suporte executou'
             ],
             'ticket' => [
-                'type' => Type::listOf(GraphQL::type('Ticket')),
+                'type' => GraphQL::type('Ticket'),
                 'description' => 'Ticket associado ao serviço (suporte)',
                 'selectable' => false,
             ]
