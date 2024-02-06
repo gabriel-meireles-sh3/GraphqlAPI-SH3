@@ -61,7 +61,6 @@ class UserTest extends TestCase
             ]);
     }
 
-    /*
     public function test_mutation_login_withValidData()
     {
         $user = User::factory()->create([
@@ -72,11 +71,14 @@ class UserTest extends TestCase
         $response = $this->mutation('login', [
             'email' => "teste@gmail.com",
             'password' => "123456",
+        ], [])
+        ->assertJson([
+            'data' => [
+                "login" => true,
+            ],
         ]);
-
-        var_dump($response->json());
-    }*/
-    /*
+    }
+    
     public function test_mutation_login_withInvalidData()
     {
         $invalidLoginData = [
@@ -86,14 +88,14 @@ class UserTest extends TestCase
         $this->mutation('login', [
             'email' => $invalidLoginData['email'],
             'password' => $invalidLoginData['password'],
-        ],)
+        ], [])
             ->assertJson([
                 'data' => [
                     'login' => null,
                 ],
                 'errors' => true,
             ]);
-    }*/
+    }
 
     public function teste_mutation_logout()
     {
@@ -102,7 +104,12 @@ class UserTest extends TestCase
 
         $this->withHeaders([
             "Authorization" => "Bearer {$token}"
-        ])->mutation('logout');
+        ])->mutation('logout', [], [])
+        ->assertJson([
+            'data' => [
+                'logout' => true,
+            ]
+        ]);
     }
 
     public function teste_query_users()
