@@ -20,9 +20,18 @@ return [
     'schemas' => [
         'default' => [
             'query' => [
+                // User
                 'users' => \App\GraphQL\Queries\User\UsersQuery::class,
                 'user' => \App\GraphQL\Queries\User\UserQuery::class,
                 'allSuport' => \App\GraphQL\Queries\User\AllSuportQuery::class,
+
+                //Ticket
+                'tickets' => \App\GraphQL\Queries\Ticket\TicketsQuery::class,
+                'ticket' => \App\GraphQL\Queries\Ticket\TicketQuery::class,
+
+                // Service
+                'services' => \App\GraphQL\Queries\Service\ServicesQuery::class,
+                'service' => \App\GraphQL\Queries\Service\ServiceQuery::class,
             ],
             'mutation' => [
                 // User
@@ -36,6 +45,11 @@ return [
                 'restoreTicket' => \App\GraphQL\Mutations\Ticket\restoreTicketMutation::class,
                 'updateTicket' => \App\GraphQL\Mutations\Ticket\updateTicketMutation::class,
 
+                // Service
+                'createService' => \App\GraphQL\Mutations\Service\createServiceMutation::class,
+                'removeService' => \App\GraphQL\Mutations\Service\removeServiceMutation::class,
+                'restoreService' => \App\GraphQL\Mutations\Service\restoreServiceMutation::class,
+                'updateService' => \App\GraphQL\Mutations\Service\updateServiceMutation::class,
             ],
             // The types only available in this schema
             'types' => [
@@ -62,6 +76,7 @@ return [
         'ServiceAreas' => \App\GraphQL\Types\ServiceAreasType::class,
 
         'Ticket' => \App\GraphQL\Types\TicketType::class,
+        'Service' => \App\GraphQL\Types\ServiceType::class,
     ],
 
     // This callable will be passed the Error object for each errors GraphQL catch.
