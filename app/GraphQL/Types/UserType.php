@@ -6,6 +6,7 @@ namespace App\GraphQL\Types;
 
 use App\Models\User;
 use GraphQL\Type\Definition\Type;
+use Rebing\GraphQL\GraphQL as GraphQLGraphQL;
 use Rebing\GraphQL\Support\Facades\GraphQL;
 use Rebing\GraphQL\Support\Type as GraphQLType;
 
@@ -40,6 +41,10 @@ class UserType extends GraphQLType
                 'type' => Type::listOf(GraphQL::type('ServiceAreas')),
                 'description' => 'Áreas de serviço do usuário',
                 'selectable' => false,
+            ],
+            'associated_services' => [
+                'type' => Type::listOf(GraphQL::type('Service')),
+                'description' => 'Lista de serviços que o analista de suporte está atendendo',
             ],
         ];
     }

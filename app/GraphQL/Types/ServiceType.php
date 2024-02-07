@@ -52,7 +52,14 @@ class ServiceType extends GraphQLType
                 'type' => GraphQL::type('Ticket'),
                 'description' => 'Ticket associado ao serviço (suporte)',
                 'selectable' => false,
-            ]
+            ],
+            'user' => [
+                'type' => GraphQL::type('User'),
+                'description' => 'Usuário associado à ordem de serviço',
+                'resolve' => function ($root, $args) {
+                    return $root->user;
+                },
+            ],
         ];
     }
 }
