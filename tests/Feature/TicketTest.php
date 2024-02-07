@@ -33,10 +33,14 @@ class TicketTest extends TestCase
                 'name' => $ticketData['name'],
                 'client' => $ticketData['client'],
                 'occupation_area' => $ticketData['occupation_area'],
-            ], ['id', 'name', 'client', 'occupation_area'])
+            ], ['name', 'client', 'occupation_area'])
             ->assertJson([
                 'data' => [
-                    "createTicket" => true,
+                    "createTicket" => [
+                        'name' => $ticketData['name'],
+                        'client' => $ticketData['client'],
+                        'occupation_area' => $ticketData['occupation_area'],
+                    ],
                 ],
             ]);
     }
@@ -57,7 +61,12 @@ class TicketTest extends TestCase
             ], ['id', 'name', 'client', 'occupation_area'])
             ->assertJson([
                 'data' => [
-                    "updateTicket" => true,
+                    "updateTicket" => [
+                        'name' => 'Nome da pessoa',
+                        'client' => 'Nome da empresa',
+                        'occupation_area' => 'Area para suporte',
+                        'id' => $ticket->id
+                    ],
                 ],
             ]);
     }
@@ -68,14 +77,14 @@ class TicketTest extends TestCase
         $token = auth()->login($user);
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
-        ->mutation('removeTicket', [
-            'id' => Ticket::factory()->create()->id,
-        ], [])
-        ->assertJson([
-            'data' => [
-                "removeTicket" => true,
-            ]
-        ]);
+            ->mutation('removeTicket', [
+                'id' => Ticket::factory()->create()->id,
+            ], [])
+            ->assertJson([
+                'data' => [
+                    "removeTicket" => true,
+                ]
+            ]);
     }
 
     public function test_mutation_restoreTicket()
@@ -88,14 +97,14 @@ class TicketTest extends TestCase
         $ticket->delete();
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
-        ->mutation('restoreTicket', [
-            'id' => $id,
-        ], [])
-        ->assertJson([
-            'data' => [
-                "restoreTicket" => true,
-            ]
-        ]);
+            ->mutation('restoreTicket', [
+                'id' => $id,
+            ], [])
+            ->assertJson([
+                'data' => [
+                    "restoreTicket" => true,
+                ]
+            ]);
     }
 
     public function test_query_tickets()
@@ -105,13 +114,22 @@ class TicketTest extends TestCase
 
         $ticket = Ticket::factory(5)->create();
 
+        $expectedTickets = $ticket->map(function ($ticket) {
+            return [
+                'id' => $ticket->id,
+                'name' => $ticket->name,
+                'client' => $ticket->client,
+                'occupation_area' => $ticket->occupation_area,
+            ];
+        })->toArray();
+
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
-        ->query('tickets', [], ['id', 'name', 'client', 'occupation_area'])
-        ->assertJson([
-            'data' => [
-                "tickets" => true,
-            ]
-        ]);
+            ->query('tickets', [], ['id', 'name', 'client', 'occupation_area'])
+            ->assertJson([
+                'data' => [
+                    "tickets" => $expectedTickets,
+                ]
+            ]);
     }
 
     public function test_query_ticket()
@@ -124,11 +142,16 @@ class TicketTest extends TestCase
         $id = $randomTicket->id;
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
-        ->query('ticket', ['id' => $id], ['id', 'name', 'client', 'occupation_area'])
-        ->assertJson([
-            'data' => [
-                "ticket" => true,
-            ]
-        ]);
+            ->query('ticket', ['id' => $id], ['id', 'name', 'client', 'occupation_area'])
+            ->assertJson([
+                'data' => [
+                    "ticket" => [
+                        'id' => $randomTicket->id,
+                        'name' => $randomTicket->name,
+                        'client' => $randomTicket->client,
+                        'occupation_area' => $randomTicket->occupation_area,
+                    ],
+                ],
+            ]);
     }
 }
