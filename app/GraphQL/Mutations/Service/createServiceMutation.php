@@ -20,7 +20,7 @@ class createServiceMutation extends Mutation
     {
         $allowedRoles = [User::ROLE_ATTENDANT, User::ROLE_ADMIN];
         try{
-            AuthUtils::checkAuthenticationAndRoles($allowedRoles);
+            $this->auth = AuthUtils::checkAuthenticationAndRoles($allowedRoles);
         } catch(Exception $e){
             return false;
         }

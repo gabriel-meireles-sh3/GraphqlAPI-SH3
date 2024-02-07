@@ -14,7 +14,6 @@ class AuthUtils
         } catch (JWTException $e) {
             return false;
         }
-
         if (!$user || !$user->hasAnyRole($roles)) {
             return false;
         }

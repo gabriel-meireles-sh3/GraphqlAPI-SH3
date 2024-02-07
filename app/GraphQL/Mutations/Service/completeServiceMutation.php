@@ -20,7 +20,7 @@ class completeServiceMutation extends Mutation
     {
         $allowedRoles = [User::ROLE_SUPPORT];
         try{
-            AuthUtils::checkAuthenticationAndRoles($allowedRoles);
+            $this->auth = AuthUtils::checkAuthenticationAndRoles($allowedRoles);
         } catch(Exception $e){
             return false;
         }

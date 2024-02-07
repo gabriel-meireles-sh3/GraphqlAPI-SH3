@@ -20,7 +20,7 @@ class createTicketMutation extends Mutation
     {
         $allowedRoles = [User::ROLE_ADMIN, User::ROLE_ATTENDANT];
         try {
-            AuthUtils::checkAuthenticationAndRoles($allowedRoles);
+            $this->auth = AuthUtils::checkAuthenticationAndRoles($allowedRoles);
         } catch (Exception $e) {
             return false;
         }
