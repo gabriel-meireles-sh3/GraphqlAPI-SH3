@@ -89,7 +89,7 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(ServiceAreas::class);
     }
 
-    public function ticket_services()
+    public function associated_services()
     {
         return $this->hasMany(Service::class, 'support_id');
     }
