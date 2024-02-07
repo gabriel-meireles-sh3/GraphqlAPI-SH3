@@ -271,13 +271,13 @@ class ServiceTest extends TestCase
         $service = Service::factory()->create(['support_id' => $supportUser->id]);
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
-            ->mutation('unassociateService', [
+            ->mutation('completeService', [
                 'service_id' => $service->id,
                 'service' => $this->faker->word(),
             ], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
             ->assertJson([
                 'data' => [
-                    "unassociateService" => true,
+                    "completeService" => true,
                 ],
             ]);
     }
@@ -288,7 +288,7 @@ class ServiceTest extends TestCase
         $token = auth()->login($user);
         Ticket::factory()->create();
 
-        $serviceIncomplete = Service::factory()->create(['status' => false]);
+        Service::factory()->create(['status' => false]);
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
         ->query('servicesIncomplete', 
