@@ -117,13 +117,22 @@ class UserTest extends TestCase
         $user = User::factory()->create();
         $token  = auth()->login($user);
 
-        User::factory(3)->create(['name' => 'teste']);
+        $users = User::factory(3)->create(['name' => 'teste']);
+
+        $expectedUsers = $users->map(function ($users) {
+            return [
+                'id' => $users->id,
+                'name' => $users->name,
+                'role' => $users->role,
+                'email' => $users->email,
+            ];
+        })->toArray();
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
             ->query('users', ['name' => 'teste'], ['id', 'name', 'role', 'email'])
             ->assertJson([
                 'data' => [
-                    "users" => true,
+                    "users" => $expectedUsers,
                 ],
             ]);
     }
