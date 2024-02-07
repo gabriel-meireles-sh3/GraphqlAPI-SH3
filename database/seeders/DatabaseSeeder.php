@@ -32,5 +32,6 @@ class DatabaseSeeder extends Seeder
         Service::factory()->create(['support_id' => NULL]);
         Service::factory()->create(['status' => true]);
         Service::factory()->create(['service_area' => $serviceArea->service_area]);
+        Service::factory()->create(['support_id' => $user->id]);
     }
 }

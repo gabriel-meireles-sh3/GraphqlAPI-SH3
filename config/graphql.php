@@ -57,7 +57,7 @@ return [
                 'restoreService' => \App\GraphQL\Mutations\Service\restoreServiceMutation::class,
                 'updateService' => \App\GraphQL\Mutations\Service\updateServiceMutation::class,
                 'associateService' => \App\GraphQL\Mutations\Service\associateServiceMutation::class,
-                'unassociateService' => \App\GraphQL\Mutations\Service\completeServiceMutation::class,
+                'completeService' => \App\GraphQL\Mutations\Service\completeServiceMutation::class,
             ],
             // The types only available in this schema
             'types' => [
