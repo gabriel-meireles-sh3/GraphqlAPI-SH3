@@ -22,7 +22,7 @@ class ServiceTest extends TestCase
     {
         $user = User::factory()->create(['role' => User::ROLE_ATTENDANT]);
         $token = auth()->login($user);
-        
+
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
         Ticket::factory()->create();
         $service = Service::factory()->create();
@@ -36,12 +36,18 @@ class ServiceTest extends TestCase
             ], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
             ->assertJson([
                 'data' => [
-                    "createService" => true,
+                    "createService" => [
+                        'requester_name' => $service->requester_name,
+                        'client_id' => $service->client_id,
+                        'service_area' => $service->service_area,
+                        'support_id' => $service->support_id,
+                    ],
                 ],
             ]);
     }
 
-    public function test_mutation_updateService(){
+    public function test_mutation_updateService()
+    {
         $user = User::factory()->create(['role' => User::ROLE_ADMIN]);
         $token = auth()->login($user);
 
@@ -52,21 +58,35 @@ class ServiceTest extends TestCase
         $clientIds = Ticket::pluck('id')->toArray();
         $supportIds = User::where('role', User::ROLE_SUPPORT)->pluck('id')->toArray();
 
+        $newServiceData = [
+            'id' => $service->id,
+            'requester_name' => $this->faker->name(),
+            'client_id' => $this->faker->randomElement($clientIds),
+            'service_area' => $this->faker->word(),
+            'support_id' =>  $this->faker->randomElement($supportIds),
+        ];
+
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
             ->mutation('updateService', [
-                'id' => $service->id,
-                'requester_name' => $this->faker->name(),
-                'client_id' => $this->faker->randomElement($clientIds),
-                'service_area' => $this->faker->word(),
-                'support_id' =>  $this->faker->randomElement($supportIds),
+                'id' => $newServiceData['id'],
+                'requester_name' => $newServiceData['requester_name'],
+                'client_id' => $newServiceData['client_id'],
+                'service_area' => $newServiceData['service_area'],
+                'support_id' =>  $newServiceData['support_id'],
             ], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
             ->assertJson([
                 'data' => [
-                    "updateService" => true,
+                    "updateService" => [
+                        'id' => $newServiceData['id'],
+                        'requester_name' => $newServiceData['requester_name'],
+                        'client_id' => $newServiceData['client_id'],
+                        'service_area' => $newServiceData['service_area'],
+                        'support_id' =>  $newServiceData['support_id'],
+                    ],
                 ],
             ]);
     }
-    
+
     public function test_mutation_removeService()
     {
         $user = User::factory()->create(['role' => User::ROLE_ADMIN]);
@@ -74,16 +94,16 @@ class ServiceTest extends TestCase
 
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
         Ticket::factory()->create();
-        
+
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
-        ->mutation('removeService', [
-            'id' => Service::factory()->create()->id,
-        ], [])
-        ->assertJson([
-            'data' => [
-                "removeService" => true,
-            ]
-        ]);
+            ->mutation('removeService', [
+                'id' => Service::factory()->create()->id,
+            ], [])
+            ->assertJson([
+                'data' => [
+                    "removeService" => true,
+                ]
+            ]);
     }
 
     public function test_mutation_restoreService()
@@ -98,14 +118,14 @@ class ServiceTest extends TestCase
         $service->delete();
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
-        ->mutation('restoreService', [
-            'id' => $id,
-        ], [])
-        ->assertJson([
-            'data' => [
-                "restoreService" => true,
-            ]
-        ]);
+            ->mutation('restoreService', [
+                'id' => $id,
+            ], [])
+            ->assertJson([
+                'data' => [
+                    "restoreService" => true,
+                ]
+            ]);
     }
 
     public function test_query_services()
@@ -115,15 +135,25 @@ class ServiceTest extends TestCase
 
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
         Ticket::factory()->create();
-        Service::factory(5)->create();
+        $services = Service::factory(5)->create();
+
+        $expectedServices = $services->map(function ($service) {
+            return [
+                'client_id' => $service->client_id,
+                'id' => $service->id,
+                'requester_name' => $service->requester_name,
+                'service_area' => $service->service_area,
+                'support_id' => $service->support_id,
+            ];
+        })->toArray();
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
-        ->query('services', [], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
-        ->assertJson([
-            'data' => [
-                "services" => true,
-            ]
-        ]);
+            ->query('services', [], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
+            ->assertJson([
+                'data' => [
+                    'services' => $expectedServices,
+                ],
+            ]);
     }
 
     public function test_query_service()
@@ -138,12 +168,18 @@ class ServiceTest extends TestCase
         $id = $randomService->id;
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
-        ->query('service', ['id' => $id], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
-        ->assertJson([
-            'data' => [
-                "service" => true,
-            ]
-        ]);
+            ->query('service', ['id' => $id], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
+            ->assertJson([
+                'data' => [
+                    "service" => [
+                        'client_id' => $randomService->client_id,
+                        'id' => $randomService->id,
+                        'requester_name' => $randomService->requester_name,
+                        'service_area' => $randomService->service_area,
+                        'support_id' => $randomService->support_id,
+                    ],
+                ]
+            ]);
     }
 
     public function test_query_servicesBySupportId()
@@ -151,18 +187,28 @@ class ServiceTest extends TestCase
         $user = User::factory()->create();
         $token = auth()->login($user);
 
-        $users = User::factory()->create(['role' => User::ROLE_SUPPORT]);
+        $support = User::factory()->create(['role' => User::ROLE_SUPPORT]);
         Ticket::factory(5)->create();
-        Service::factory(5)->create();
-        $id = $users->id;
+        $services = Service::factory(5)->create();
+        $id = $support->id;
+
+        $expectedServices = $services->map(function ($service) {
+            return [
+                'client_id' => $service->client_id,
+                'id' => $service->id,
+                'requester_name' => $service->requester_name,
+                'service_area' => $service->service_area,
+                'support_id' => $service->support_id,
+            ];
+        })->toArray();
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
-        ->query('servicesBySupportId', ['support_id' => $id], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
-        ->assertJson([
-            'data' => [
-                "servicesBySupportId" => true,
-            ]
-        ]);
+            ->query('servicesBySupportId', ['support_id' => $id], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
+            ->assertJson([
+                'data' => [
+                    "servicesBySupportId" => $expectedServices,
+                ]
+            ]);
     }
 
     public function test_query_servicesByTicketId()
@@ -172,20 +218,30 @@ class ServiceTest extends TestCase
 
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
         $ticket = Ticket::factory()->create();
-        Service::factory(5)->create();
+        $services = Service::factory(5)->create();
         $id = $ticket->id;
 
+        $expectedServices = $services->map(function ($service) {
+            return [
+                'client_id' => $service->client_id,
+                'id' => $service->id,
+                'requester_name' => $service->requester_name,
+                'service_area' => $service->service_area,
+                'support_id' => $service->support_id,
+            ];
+        })->toArray();
+
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
-        ->query('servicesByTicketId', ['ticket_id' => $id], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
-        ->assertJson([
-            'data' => [
-                "servicesByTicketId" => true,
-            ]
-        ]);
+            ->query('servicesByTicketId', ['ticket_id' => $id], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
+            ->assertJson([
+                'data' => [
+                    "servicesByTicketId" => $expectedServices,
+                ]
+            ]);
     }
 
     public function test_mutation_serviceAssociate()
-    {   
+    {
         $supportUser = User::factory()->create(['role' => User::ROLE_SUPPORT]);
         $token = auth()->login($supportUser);
         Ticket::factory()->create();
@@ -198,10 +254,15 @@ class ServiceTest extends TestCase
             ], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
             ->assertJson([
                 'data' => [
-                    "associateService" => true,
+                    "associateService" => [
+                        'client_id' => "$service->client_id",
+                        'id' => $service->id,
+                        'requester_name' => $service->requester_name,
+                        'service_area' => $service->service_area,
+                        'support_id' => "$supportUser->id",
+                    ],
                 ],
             ]);
-
     }
 
     public function test_query_servicesAreas()
@@ -217,12 +278,16 @@ class ServiceTest extends TestCase
         }
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
-        ->query('servicesAreas', [], ['service_area'])
-        ->assertJson([
-            'data' => [
-                "servicesAreas" => true,
-            ]
-        ]);
+            ->query('servicesAreas', [], ['service_area'])
+            ->assertJsonStructure([
+                'data' => [
+                    "servicesAreas" => [
+                        '*' => [
+                            'service_area',
+                        ],
+                    ],
+                ],
+            ]);
     }
 
     public function test_query_servicesTypes()
@@ -231,18 +296,22 @@ class ServiceTest extends TestCase
         $token = auth()->login($user);
 
         Ticket::factory()->create();
-        $serviceTypes= ['TypeA', 'TypeB', 'TypeC'];
+        $serviceTypes = ['TypeA', 'TypeB', 'TypeC'];
         foreach ($serviceTypes as $area) {
             Service::factory()->create(['service' => $area]);
         }
 
-        $this->withHeaders(["Authorization" => "Bearer {$token}"])
-        ->query('servicesTypes', [], ['service_area'])
-        ->assertJson([
-            'data' => [
-                "servicesTypes" => true,
-            ]
-        ]);
+        $response = $this->withHeaders(["Authorization" => "Bearer {$token}"])
+            ->query('servicesTypes', [], ['service'])
+            ->assertJsonStructure([
+                'data' => [
+                    "servicesTypes" => [
+                        '*' => [
+                            'service',
+                        ],
+                    ],
+                ],
+            ]);
     }
 
     public function test_query_services_Unassociated()
@@ -254,13 +323,24 @@ class ServiceTest extends TestCase
         $serviceWithoutSupport = Service::factory()->create(['support_id' => NULL]);
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
-        ->query('servicesUnassociated', 
-        [], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
-        ->assertJson([
-            'data' => [
-                "servicesUnassociated" => true,
-            ]
-        ]);
+            ->query(
+                'servicesUnassociated',
+                [],
+                ['id', 'requester_name', 'client_id', 'service_area', 'support_id']
+            )
+            ->assertJson([
+                'data' => [
+                    "servicesUnassociated" => [
+                        [
+                            'id' => $serviceWithoutSupport->id,
+                            'requester_name' => $serviceWithoutSupport->requester_name,
+                            'client_id' => "$serviceWithoutSupport->client_id",
+                            'service_area' => $serviceWithoutSupport->service_area,
+                            'support_id' => $serviceWithoutSupport->support_id,
+                        ],
+                    ],
+                ],
+            ]);
     }
 
     public function test_mutation_serviceComplete()
@@ -277,7 +357,13 @@ class ServiceTest extends TestCase
             ], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
             ->assertJson([
                 'data' => [
-                    "completeService" => true,
+                    "completeService" => [
+                        'id' => $service->id,
+                        'requester_name' => $service->requester_name,
+                        'client_id' => "$service->client_id",
+                        'service_area' => $service->service_area,
+                        'support_id' => $service->support_id,
+                    ],
                 ],
             ]);
     }
@@ -288,15 +374,26 @@ class ServiceTest extends TestCase
         $token = auth()->login($user);
         Ticket::factory()->create();
 
-        Service::factory()->create(['status' => false]);
+        $service = Service::factory()->create(['status' => false]);
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
-        ->query('servicesIncomplete', 
-        [], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
-        ->assertJson([
-            'data' => [
-                "servicesIncomplete" => true,
-            ]
-        ]);
+            ->query(
+                'servicesIncomplete',
+                [],
+                ['id', 'requester_name', 'client_id', 'service_area', 'support_id']
+            )
+            ->assertJson([
+                'data' => [
+                    "servicesIncomplete" => [
+                        [
+                        'id' => $service->id,
+                        'requester_name' => $service->requester_name,
+                        'client_id' => "$service->client_id",
+                        'service_area' => $service->service_area,
+                        'support_id' => $service->support_id,
+                        ],
+                    ],
+                ],
+            ]);
     }
 }
