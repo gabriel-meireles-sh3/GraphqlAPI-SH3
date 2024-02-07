@@ -59,9 +59,9 @@ class User extends Authenticatable implements JWTSubject
 
     protected $with = ['service_areas'];
 
-    public function hasRole($role)
-    {   
-        return $this->role == $role;
+    public function hasAnyRole(array $roles)
+    {
+        return in_array($this->role, $roles);
     }
 
     /**

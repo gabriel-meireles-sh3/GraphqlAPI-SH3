@@ -5,22 +5,23 @@ declare(strict_types=1);
 namespace App\GraphQL\Mutations\Service;
 
 use App\Models\Service;
+use App\Models\User;
+use App\Utils\AuthUtils;
 use Closure;
+use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use Rebing\GraphQL\Support\Facades\GraphQL;
 use Rebing\GraphQL\Support\Mutation;
-use Rebing\GraphQL\Support\SelectFields;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class completeServiceMutation extends Mutation
 {
     public function authorize($root, array $args, $ctx, ?ResolveInfo $resolveInfo = null, ?Closure $getSelectFields = null): bool
     {
+        $allowedRoles = [User::ROLE_SUPPORT];
         try{
-            $this->auth = JWTAuth::parseToken()->authenticate();
-        } catch(JWTException $e){
+            AuthUtils::checkAuthenticationAndRoles($allowedRoles);
+        } catch(Exception $e){
             return false;
         }
         return (bool) $this->auth;

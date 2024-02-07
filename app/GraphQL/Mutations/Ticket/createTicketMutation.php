@@ -5,22 +5,23 @@ declare(strict_types=1);
 namespace App\GraphQL\Mutations\Ticket;
 
 use App\Models\Ticket;
+use App\Models\User;
+use App\Utils\AuthUtils;
 use Closure;
+use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use Rebing\GraphQL\Support\Facades\GraphQL;
 use Rebing\GraphQL\Support\Mutation;
-use Rebing\GraphQL\Support\SelectFields;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class createTicketMutation extends Mutation
 {
     public function authorize($root, array $args, $ctx, ?ResolveInfo $resolveInfo = null, ?Closure $getSelectFields = null): bool
     {
-        try{
-            $this->auth = JWTAuth::parseToken()->authenticate();
-        } catch(JWTException $e){
+        $allowedRoles = [User::ROLE_ADMIN, User::ROLE_ATTENDANT];
+        try {
+            AuthUtils::checkAuthenticationAndRoles($allowedRoles);
+        } catch (Exception $e) {
             return false;
         }
         return (bool) $this->auth;
