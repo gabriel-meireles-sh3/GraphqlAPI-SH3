@@ -19,7 +19,7 @@ class TicketTest extends TestCase
 
     public function test_mutation_createTicket()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => User::ROLE_ATTENDANT]);
         $token = auth()->login($user);
 
         $ticketData = [
@@ -43,7 +43,7 @@ class TicketTest extends TestCase
 
     public function test_mutation_updateTicket()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => User::ROLE_ADMIN]);
         $token = auth()->login($user);
 
         $ticket = Ticket::factory()->create();
@@ -64,7 +64,7 @@ class TicketTest extends TestCase
 
     public function test_mutation_removeTicket()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => User::ROLE_ADMIN]);
         $token = auth()->login($user);
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
@@ -80,7 +80,7 @@ class TicketTest extends TestCase
 
     public function test_mutation_restoreTicket()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => User::ROLE_ADMIN]);
         $token = auth()->login($user);
 
         $ticket = Ticket::factory()->create();

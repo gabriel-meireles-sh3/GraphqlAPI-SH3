@@ -20,7 +20,7 @@ class ServiceTest extends TestCase
 
     public function test_mutation_createService()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => User::ROLE_ATTENDANT]);
         $token = auth()->login($user);
         
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
@@ -42,7 +42,7 @@ class ServiceTest extends TestCase
     }
 
     public function test_mutation_updateService(){
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => User::ROLE_ADMIN]);
         $token = auth()->login($user);
 
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
@@ -69,7 +69,7 @@ class ServiceTest extends TestCase
     
     public function test_mutation_removeService()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => User::ROLE_ADMIN]);
         $token = auth()->login($user);
 
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
@@ -88,7 +88,7 @@ class ServiceTest extends TestCase
 
     public function test_mutation_restoreService()
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => User::ROLE_ADMIN]);
         $token = auth()->login($user);
 
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
