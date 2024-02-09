@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Service;
+use App\Models\Support;
 use App\Models\Ticket;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -23,7 +23,8 @@ class ServiceFactory extends Factory
     {
 
         $clientIds = Ticket::pluck('id')->toArray();
-        $supportIds = User::where('role', User::ROLE_SUPPORT)->pluck('id')->toArray();
+        $supportIds = Support::pluck('id')->toArray();
+
 
         return [
             'requester_name' => $this->faker->name,
