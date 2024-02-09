@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\GraphQL\Types;
 
-use App\Models\ServiceAreas;
+use App\Models\Support;
 use GraphQL\Type\Definition\Type;
 use Rebing\GraphQL\Support\Facades\GraphQL;
 use Rebing\GraphQL\Support\Type as GraphQLType;
 
-class ServiceAreasType extends GraphQLType
+class SupportType extends GraphQLType
 {
     protected $attributes = [
         'name' => 'ServiceArea',
         'description' => 'Endpoint para áreas de serviço',
-        'model' => ServiceAreas::class,
+        'model' => Support::class,
     ];
 
     public function fields(): array
@@ -38,6 +38,10 @@ class ServiceAreasType extends GraphQLType
                 'resolve' => function ($root, $args) {
                     return $root->user;
                 },
+            ],
+            'associated_services' => [
+                'type' => Type::listOf(GraphQL::type('Service')),
+                'description' => 'Lista de serviços que o analista de suporte está atendendo',
             ],
         ];
     }

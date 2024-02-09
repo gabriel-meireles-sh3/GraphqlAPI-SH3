@@ -36,11 +36,11 @@ class TicketType extends GraphQLType
                 'type' => Type::string(),
                 'description' => 'A area onde o solicitante querer atendimento',
             ],
-            /*'service' => [
+            'service' => [
                 'type' => Type::listOf(GraphQL::type('Service')),
                 'description' => 'Serviço associados ao client(empresa)',
                 'selectable' => false,
-            ]*/
+            ]
         ];
     }
 }

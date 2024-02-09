@@ -38,13 +38,9 @@ class UserType extends GraphQLType
                 'description' => 'A role do usuário dentro do banco de dados',
             ],
             'service_areas' => [
-                'type' => Type::listOf(GraphQL::type('ServiceAreas')),
+                'type' => Type::listOf(GraphQL::type('Support')),
                 'description' => 'Áreas de serviço do usuário',
                 'selectable' => false,
-            ],
-            'associated_services' => [
-                'type' => Type::listOf(GraphQL::type('Service')),
-                'description' => 'Lista de serviços que o analista de suporte está atendendo',
             ],
         ];
     }
