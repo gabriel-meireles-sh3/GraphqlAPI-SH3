@@ -57,7 +57,7 @@ class User extends Authenticatable implements JWTSubject
         'password' => 'hashed',
     ];
 
-    protected $with = ['service_areas'];
+    protected $with = ['support'];
 
     public function hasAnyRole(array $roles)
     {
@@ -84,13 +84,8 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function service_areas()
+    public function support()
     {
-        return $this->hasMany(ServiceAreas::class);
-    }
-
-    public function associated_services()
-    {
-        return $this->hasMany(Service::class, 'support_id');
+        return $this->hasMany(Support::class);
     }
 }
