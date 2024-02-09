@@ -58,12 +58,17 @@ class completeServiceMutation extends Mutation
         $user = auth()->user();
         $service = Service::find($args['service_id']);
 
-        if ($service->support_id === $user->id){
+        $supports = $user->support;
+
+        $matchingSupport = $supports->first(function ($support) use ($service) {
+            return $support->id === $service->support_id;
+        });
+
+        if ($service && $matchingSupport) {
             $service->status = true;
             $service->service = $args['service'];
 
             $service->save();
-
             return $service;
         }
     }

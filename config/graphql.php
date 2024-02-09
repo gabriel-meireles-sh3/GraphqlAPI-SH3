@@ -64,7 +64,7 @@ return [
                 'UserData' => \App\GraphQL\Inputs\UserDataInput::class,
 
                 'User' => \App\GraphQL\Types\UserType::class,
-                'ServiceAreas' => \App\GraphQL\Types\ServiceAreasType::class,
+                'Support' => \App\GraphQL\Types\SupportType::class,
         
                 'Ticket' => \App\GraphQL\Types\TicketType::class,
                 'Service' => \App\GraphQL\Types\ServiceType::class,

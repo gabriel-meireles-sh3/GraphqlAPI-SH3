@@ -60,12 +60,19 @@ class associateServiceMutation extends Mutation
         $user = auth()->user();
         $service = Service::findOrFail($args['service_id']);
 
-        $support_area = $user->service_areas->pluck('service_area');
+        $supports = $user->support;
 
-        if ($service->support_id === NULL && $support_area->contains($service->service_area)) {
-            $service->support_id = $user->id;
+        $matchingSupport = $supports->first(function ($support) use ($service) {
+            return $support->service_area === $service->service_area;
+        });
+
+        if ($matchingSupport) {
+            $service->support_id = $matchingSupport->id;
             $service->save();
+
             return $service;
         }
+
+        return 'There is already an analyst responding to this service or the service area does not match any support.';
     }
 }
