@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\ServiceAreas;
+use App\Models\Support;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -159,7 +160,7 @@ class UserTest extends TestCase
         $supportUser = User::factory()->create(['role' => '3']);
         $this->assertNotNull($supportUser->id);
         
-        $service_area = ServiceAreas::factory()->create(['user_id' => $supportUser->id]);
+        $service_area = Support::factory()->create(['user_id' => $supportUser->id]);
         $this->assertNotNull($service_area->user_id);
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])

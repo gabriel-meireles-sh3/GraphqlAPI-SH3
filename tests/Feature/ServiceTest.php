@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Service;
 use App\Models\ServiceAreas;
+use App\Models\Support;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -24,6 +25,7 @@ class ServiceTest extends TestCase
         $token = auth()->login($user);
 
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
+        Support::factory()->create();
         Ticket::factory()->create();
         $service = Service::factory()->create();
 
@@ -52,11 +54,12 @@ class ServiceTest extends TestCase
         $token = auth()->login($user);
 
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
+        Support::factory()->create();
         Ticket::factory()->create();
         $service = Service::factory()->create();
 
         $clientIds = Ticket::pluck('id')->toArray();
-        $supportIds = User::where('role', User::ROLE_SUPPORT)->pluck('id')->toArray();
+        $supportIds = Support::pluck('id')->toArray();
 
         $newServiceData = [
             'id' => $service->id,
@@ -187,7 +190,8 @@ class ServiceTest extends TestCase
         $user = User::factory()->create();
         $token = auth()->login($user);
 
-        $support = User::factory()->create(['role' => User::ROLE_SUPPORT]);
+        $supportUser = User::factory()->create(['role' => User::ROLE_SUPPORT]);
+        $support = Support::factory()->create();
         Ticket::factory(5)->create();
         $services = Service::factory(5)->create();
         $id = $support->id;
@@ -244,9 +248,10 @@ class ServiceTest extends TestCase
     {
         $supportUser = User::factory()->create(['role' => User::ROLE_SUPPORT]);
         $token = auth()->login($supportUser);
+
         Ticket::factory()->create();
-        $service = Service::factory()->create(['support_id' => NULL, "service_area" => "service"]);
-        ServiceAreas::factory()->create(['user_id' => $supportUser->id, 'service_area' => $service->service_area]);
+        $support = Support::factory()->create(['user_id' => $supportUser->id, "service_area" => "service"]);
+        $service = Service::factory()->create(['support_id' => NULL, "service_area" => $support->service_area]);
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
             ->mutation('associateService', [
@@ -259,7 +264,7 @@ class ServiceTest extends TestCase
                         'id' => $service->id,
                         'requester_name' => $service->requester_name,
                         'service_area' => $service->service_area,
-                        'support_id' => "$supportUser->id",
+                        'support_id' => "$support->id",
                     ],
                 ],
             ]);
@@ -347,8 +352,10 @@ class ServiceTest extends TestCase
     {
         $supportUser = User::factory()->create(['role' => User::ROLE_SUPPORT]);
         $token = auth()->login($supportUser);
+
         Ticket::factory()->create();
-        $service = Service::factory()->create(['support_id' => $supportUser->id]);
+        $support = Support::factory()->create();
+        $service = Service::factory()->create(['support_id' => $support->id]);
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
             ->mutation('completeService', [
