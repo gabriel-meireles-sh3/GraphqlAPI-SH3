@@ -8,6 +8,7 @@ use App\Models\Support;
 use GraphQL\Type\Definition\Type;
 use Rebing\GraphQL\Support\Facades\GraphQL;
 use Rebing\GraphQL\Support\Type as GraphQLType;
+use Symfony\Component\VarDumper\VarDumper;
 
 class SupportType extends GraphQLType
 {
@@ -30,7 +31,7 @@ class SupportType extends GraphQLType
             ],
             'service_area' => [
                 'type' => Type::string(),
-                'description' => 'Nome da área de serviço',
+                'description' => 'Área de serviço associadas ao analista de suporte',
             ],
             'user' => [
                 'type' => GraphQL::type('User'),
@@ -41,7 +42,11 @@ class SupportType extends GraphQLType
             ],
             'associated_services' => [
                 'type' => Type::listOf(GraphQL::type('Service')),
-                'description' => 'Lista de serviços que o analista de suporte está atendendo',
+                'description' => 'Lista de serviços que o analista de suporte está atendendo nessa área',
+                'selectable' => false,
+                'resolve' => function ($root, $args) {
+                    return $root->associated_services;
+                }
             ],
         ];
     }

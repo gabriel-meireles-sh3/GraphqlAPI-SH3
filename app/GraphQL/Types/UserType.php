@@ -41,6 +41,9 @@ class UserType extends GraphQLType
                 'type' => Type::listOf(GraphQL::type('Support')),
                 'description' => 'Áreas de serviço do usuário',
                 'selectable' => false,
+                'resolve' => function ($root, $args) {
+                    return $root->support;
+                }
             ],
         ];
     }

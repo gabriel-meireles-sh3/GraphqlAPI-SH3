@@ -30,7 +30,7 @@ class ServiceType extends GraphQLType
             ],
             'client_id' => [
                 'type' => Type::nonNull(Type::string()),
-                'description' => 'O ID do client relacionado a ordem de serviço dentro do banco de dados'
+                'description' => 'O ID do client relacionado a ordem de serviço'
             ],
             'service_area' => [
                 'type' => Type::nonNull(Type::string()),
@@ -57,7 +57,7 @@ class ServiceType extends GraphQLType
                 'type' => GraphQL::type('Support'),
                 'description' => 'Support associado à ordem de serviço',
                 'resolve' => function ($root, $args) {
-                    return $root->user;
+                    return $root->support;
                 },
             ],
         ];

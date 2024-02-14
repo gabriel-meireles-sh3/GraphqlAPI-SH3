@@ -51,7 +51,7 @@ class associateServiceMutation extends Mutation
     public function validationErrorMessages(array $args = []): array
     {
         return [
-            'id.exists' => 'Ticket não encontrado',
+            'service_id.exists' => 'Serviço não encontrado',
         ];
     }
 
