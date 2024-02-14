@@ -96,11 +96,13 @@ class ServiceTest extends TestCase
         $token = auth()->login($user);
 
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
+        Support::factory()->create();
         Ticket::factory()->create();
+        $service = Service::factory()->create();
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
             ->mutation('removeService', [
-                'id' => Service::factory()->create()->id,
+                'id' => $service->id,
             ], [])
             ->assertJson([
                 'data' => [
@@ -115,6 +117,7 @@ class ServiceTest extends TestCase
         $token = auth()->login($user);
 
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
+        Support::factory()->create();
         Ticket::factory()->create();
         $service = Service::factory()->create();
         $id = $service->id;
@@ -137,6 +140,7 @@ class ServiceTest extends TestCase
         $token = auth()->login($user);
 
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
+        Support::factory()->create();
         Ticket::factory()->create();
         $services = Service::factory(5)->create();
 
@@ -165,6 +169,7 @@ class ServiceTest extends TestCase
         $token = auth()->login($user);
 
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
+        Support::factory()->create();
         Ticket::factory()->create();
         $service = Service::factory(5)->create();
         $randomService = $service->random();
@@ -221,6 +226,7 @@ class ServiceTest extends TestCase
         $token = auth()->login($user);
 
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
+        Support::factory()->create();
         $ticket = Ticket::factory()->create();
         $services = Service::factory(5)->create();
         $id = $ticket->id;
@@ -300,7 +306,10 @@ class ServiceTest extends TestCase
         $user = User::factory()->create();
         $token = auth()->login($user);
 
+        User::factory()->create(['role' => User::ROLE_SUPPORT]);
+        Support::factory()->create();
         Ticket::factory()->create();
+
         $serviceTypes = ['TypeA', 'TypeB', 'TypeC'];
         foreach ($serviceTypes as $area) {
             Service::factory()->create(['service' => $area]);
@@ -323,6 +332,9 @@ class ServiceTest extends TestCase
     {
         $user = User::factory()->create();
         $token = auth()->login($user);
+
+        User::factory()->create(['role' => User::ROLE_SUPPORT]);
+        Support::factory()->create();
         Ticket::factory()->create();
 
         $serviceWithoutSupport = Service::factory()->create(['support_id' => NULL]);
@@ -379,6 +391,9 @@ class ServiceTest extends TestCase
     {
         $user = User::factory()->create();
         $token = auth()->login($user);
+
+        User::factory()->create(['role' => User::ROLE_SUPPORT]);
+        Support::factory()->create();
         Ticket::factory()->create();
 
         $service = Service::factory()->create(['status' => false]);
