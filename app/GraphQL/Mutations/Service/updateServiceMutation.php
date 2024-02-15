@@ -71,7 +71,7 @@ class updateServiceMutation extends Mutation
     public function validationErrorMessages(array $args = []): array
     {
         return [
-            'id.exists' => 'Ticket não encontrado',
+            'id.exists' => 'Service não encontrado',
         ];
     }
 

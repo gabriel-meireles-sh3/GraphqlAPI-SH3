@@ -53,6 +53,14 @@ class completeServiceMutation extends Mutation
         ];
     }
 
+    public function validationErrorMessages(array $args = []): array
+    {
+        return [
+            'service_id.exists' => 'Serviço não encontrado',
+            'service.required' => 'Field Service não pode ser vazio'
+        ];
+    }
+
     public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
     {
         $user = auth()->user();

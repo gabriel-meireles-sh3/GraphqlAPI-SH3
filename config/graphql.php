@@ -61,7 +61,6 @@ return [
             ],
             // The types only available in this schema
             'types' => [
-                'UserData' => \App\GraphQL\Inputs\UserDataInput::class,
 
                 'User' => \App\GraphQL\Types\UserType::class,
                 'Support' => \App\GraphQL\Types\SupportType::class,
