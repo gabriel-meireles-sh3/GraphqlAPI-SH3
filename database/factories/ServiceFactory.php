@@ -23,11 +23,12 @@ class ServiceFactory extends Factory
     {
 
         $clientIds = Ticket::pluck('id')->toArray();
+        $requester_names = Ticket::pluck('name')->toArray();
         $supportIds = Support::pluck('id')->toArray();
         $supportAreas = Support::whereNotNull('service_area')->pluck('service_area')->toArray();
         
         return [
-            'requester_name' => $this->faker->name,
+            'requester_name' => $this->faker->randomElement($requester_names),
             'client_id' => $this->faker->randomElement($clientIds),
             'service_area' => $this->faker->randomElement($supportAreas),
             'support_id' => $this->faker->randomElement($supportIds),

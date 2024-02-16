@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\GraphQL\Mutations\Ticket;
 
+use App\GraphQL\Validations\TicketValidation;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Utils\AuthUtils;
 use Closure;
+use Illuminate\Validation\ValidationException;
 use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
@@ -41,30 +43,29 @@ class createTicketMutation extends Mutation
     {
         return [
             'name' => [
-                'name' => 'name',
                 'type' => Type::nonNull(Type::string()),
-                'rules' => ['required'],
+                'description' => 'O nome do requisitante'
             ],
             'client' => [
-                'name' => 'client',
                 'type' => Type::nonNull(Type::string()),
-                'rules' => ['required'],
+                'description' => 'O nome do cliente (empresa)'
             ],
             'occupation_area' => [
-                'name' => 'occupation_area',
                 'type' => Type::nonNull(Type::string()),
-                'rules' => ['required'],
+                'description' => 'O área que o requisitante opera e requer o suporte'
             ],
         ];
     }
 
     public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
     {
-        /*$ticket = Ticket::create([
-            'name' => $args['name'],
-            'client' => $args['client'],
-            'occupation_area' => $args['occupation_area'],
-        ]);*/
+        $validator = TicketValidation::make($args);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->toArray();
+
+            throw ValidationException::withMessages($errors);
+        }
 
         $ticket = new Ticket();
         $ticket->fill($args);

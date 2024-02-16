@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\GraphQL\Mutations\Ticket;
 
+use App\GraphQL\Validations\TicketValidation;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Utils\AuthUtils;
@@ -11,6 +12,7 @@ use Closure;
 use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
+use Illuminate\Validation\ValidationException;
 use Rebing\GraphQL\Support\Facades\GraphQL;
 use Rebing\GraphQL\Support\Mutation;
 
@@ -42,23 +44,20 @@ class updateTicketMutation extends Mutation
         return [
             'id' => [
                 'name' => 'id',
-                'type' => Type::nonNull(Type::int()),
+                'type' => Type::int(),
                 'rules' => ['required', 'exists:tickets,id,deleted_at,NULL'],
             ],
             'name' => [
-                'name' => 'name',
-                'type' => Type::nonNull(Type::string()),
-                'rules' => ['required'],
+                'type' => Type::string(),
+                'description' => 'O nome do requisitante'
             ],
             'client' => [
-                'name' => 'client',
-                'type' => Type::nonNull(Type::string()),
-                'rules' => ['required'],
+                'type' => Type::string(),
+                'description' => 'O nome do cliente (empresa)'
             ],
             'occupation_area' => [
-                'name' => 'occupation_area',
-                'type' => Type::nonNull(Type::string()),
-                'rules' => ['required'],
+                'type' => Type::string(),
+                'description' => 'O área que o requisitante opera e requer o suporte'
             ],
         ];
     }
@@ -73,7 +72,17 @@ class updateTicketMutation extends Mutation
     public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
     {
         $ticket = Ticket::findOrFail($args['id']);
+
+        $validator = TicketValidation::make($args);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->toArray();
+
+            throw ValidationException::withMessages($errors);
+        }
+
         $ticket->update($args);
+
+        $ticket = $ticket->fresh();
 
         return $ticket;
     }

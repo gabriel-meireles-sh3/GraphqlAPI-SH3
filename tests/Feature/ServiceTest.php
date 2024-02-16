@@ -54,18 +54,20 @@ class ServiceTest extends TestCase
         $token = auth()->login($user);
 
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
-        Support::factory()->create();
-        Ticket::factory()->create();
+        Support::factory(5)->create();
+        Ticket::factory(5)->create();
         $service = Service::factory()->create();
 
         $clientIds = Ticket::pluck('id')->toArray();
+        $requester_names = Ticket::pluck('name')->toArray();
         $supportIds = Support::pluck('id')->toArray();
+        $supportAreas = Support::whereNotNull('service_area')->pluck('service_area')->toArray();
 
         $newServiceData = [
             'id' => $service->id,
-            'requester_name' => $this->faker->name(),
+            'requester_name' =>  $this->faker->randomElement($requester_names),
             'client_id' => $this->faker->randomElement($clientIds),
-            'service_area' => $this->faker->word(),
+            'service_area' => $this->faker->randomElement($supportAreas),
             'support_id' =>  $this->faker->randomElement($supportIds),
         ];
 
