@@ -198,9 +198,9 @@ class ServiceTest extends TestCase
         $token = auth()->login($user);
 
         $supportUser = User::factory()->create(['role' => User::ROLE_SUPPORT]);
-        $support = Support::factory()->create();
+        $support = Support::factory()->create(['user_id' => $supportUser->id]);
         Ticket::factory(5)->create();
-        $services = Service::factory(5)->create();
+        $services = Service::factory(5)->create(["support_id" => $support->id]);
         $id = $support->id;
 
         $expectedServices = $services->map(function ($service) {
@@ -214,7 +214,7 @@ class ServiceTest extends TestCase
         })->toArray();
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
-            ->query('servicesBySupportId', ['support_id' => $id], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
+            ->query('servicesBySupportId', ['support_id' => "$id"], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
             ->assertJson([
                 'data' => [
                     "servicesBySupportId" => $expectedServices,
@@ -230,7 +230,7 @@ class ServiceTest extends TestCase
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
         Support::factory()->create();
         $ticket = Ticket::factory()->create();
-        $services = Service::factory(5)->create();
+        $services = Service::factory(5)->create(['client_id' => $ticket->id]);
         $id = $ticket->id;
 
         $expectedServices = $services->map(function ($service) {
@@ -244,7 +244,7 @@ class ServiceTest extends TestCase
         })->toArray();
 
         $this->withHeaders(["Authorization" => "Bearer {$token}"])
-            ->query('servicesByTicketId', ['ticket_id' => $id], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
+            ->query('servicesByTicketId', ['ticket_id' => "$id"], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
             ->assertJson([
                 'data' => [
                     "servicesByTicketId" => $expectedServices,
@@ -314,7 +314,7 @@ class ServiceTest extends TestCase
 
         $serviceTypes = ['TypeA', 'TypeB', 'TypeC'];
         foreach ($serviceTypes as $area) {
-            Service::factory()->create(['service' => $area]);
+            Service::factory()->create(['service' => $area, 'status' => true]);
         }
 
         $response = $this->withHeaders(["Authorization" => "Bearer {$token}"])
