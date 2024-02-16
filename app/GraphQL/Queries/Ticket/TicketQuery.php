@@ -42,8 +42,15 @@ class TicketQuery extends Query
             'id' => [
                 'name' => 'id',
                 'type' => Type::int(),
-                'rules' => ['required']
+                'rules' => ['required', 'exists:tickets,id,deleted_at,NULL']
             ]
+        ];
+    }
+
+    public function validationErrorMessages(array $args = []): array
+    {
+        return [
+            'service_id.exists' => 'Ticket não encontrado',
         ];
     }
 

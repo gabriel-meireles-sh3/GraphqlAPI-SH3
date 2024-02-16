@@ -42,15 +42,22 @@ class ServiceQuery extends Query
             'id' => [
                 'name' => 'id',
                 'type' => Type::int(),
-                'rules' => ['required']
+                'rules' => ['required', 'exists:services,id,deleted_at,NULL']
             ]
+        ];
+    }
+
+    public function validationErrorMessages(array $args = []): array
+    {
+        return [
+            'service_id.exists' => 'Serviço não encontrado',
         ];
     }
 
     public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
     {
-        $tickets = Service::findOrFail($args['id']);
+        $services = Service::findOrFail($args['id']);
 
-        return $tickets;
+        return $services;
     }
 }

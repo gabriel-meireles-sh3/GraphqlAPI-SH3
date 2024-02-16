@@ -41,15 +41,27 @@ class ServicesByTicketIdQuery extends Query
         return [
             'ticket_id' => [
                 'name' => 'ticket_id',
-                'type' => Type::int(),
-                'rules' => ['required']
+                'type' => Type::string(),
+                'rules' => ['required', 'exists:tickets,id,deleted_at,NULL'],
+                'description' => 'O ID dentro do banco tickets'
             ]
+        ];
+    }
+
+    public function validationErrorMessages(array $args = []): array
+    {
+        return [
+            'ticket_id.exists' => 'Ticket ID não encontrado',
         ];
     }
 
     public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
     {
         $services = Service::where('client_id', $args['ticket_id'])->get();
+
+        if ($services->isEmpty()){
+            return null;
+        }
 
         return $services;
     }

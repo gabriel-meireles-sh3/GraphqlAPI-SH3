@@ -41,8 +41,6 @@ class AllSuportQuery extends Query
         $query = User::query();
         $query->where('role', User::ROLE_SUPPORT);
 
-        //dd($query->get());
-
         return $query->get();
     }
 }

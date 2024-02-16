@@ -41,9 +41,17 @@ class ServicesBySupportIdQuery extends Query
         return [
             'support_id' => [
                 'name' => 'support_id',
-                'type' => Type::int(),
-                'rules' => ['required']
+                'type' => Type::string(),
+                'rules' => ['required', 'exists:supports,id,deleted_at,NULL'],
+                'description' => 'O ID dentro do banco supports'
             ]
+        ];
+    }
+
+    public function validationErrorMessages(array $args = []): array
+    {
+        return [
+            'service_id.exists' => 'Support ID não encontrado',
         ];
     }
 
@@ -51,6 +59,10 @@ class ServicesBySupportIdQuery extends Query
     {
         $services = Service::where('support_id', $args['support_id'])->get();
 
+        if ($services->isEmpty()){
+            return null;
+        }
+        
         return $services;
     }
 }
