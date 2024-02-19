@@ -81,7 +81,11 @@ class UserTest extends TestCase
         ], ['id', 'name', 'role', 'email'])
             ->assertJson([
                 'data' => [
-                    'register' => null,
+                    'register' => [
+                        'name' => $userData['name'],
+                        'role' => $userData['role'],
+                        'email' => $userData['email'],
+                    ],
                 ],
             ]);
     }
