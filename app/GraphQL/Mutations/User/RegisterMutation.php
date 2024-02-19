@@ -71,7 +71,7 @@ class RegisterMutation extends Mutation
 
         if ($args['role'] == User::ROLE_SUPPORT) {
             // Verifica se service_area está presente
-            if ($args['service_area'] == null) {
+            if (!array_key_exists('service_area', $args) || $args['service_area'] === null) {
                 throw new \Exception('Field service_area required but not provided.');
             }
             // Cria a área de serviço para o usuário de suporte
