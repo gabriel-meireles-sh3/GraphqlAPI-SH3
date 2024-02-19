@@ -55,7 +55,7 @@ class createServiceMutation extends Mutation
                 'description' => 'O área de suporte para o Ticket'
             ],
             'support_id' => [
-                'type' => Type::nonNull(Type::int()),
+                'type' => Type::int(),
                 'description' => 'O ID do analista de suporte no banco Supports'
             ],
         ];

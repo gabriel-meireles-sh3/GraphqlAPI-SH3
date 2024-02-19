@@ -66,18 +66,24 @@ class completeServiceMutation extends Mutation
         $user = auth()->user();
         $service = Service::find($args['service_id']);
 
+        if (!$service) {
+            throw new \Exception("Serviço não encontrado.");
+        }
+        
         $supports = $user->support;
 
         $matchingSupport = $supports->first(function ($support) use ($service) {
             return $support->id === $service->support_id;
         });
 
-        if ($service && $matchingSupport) {
+        if ($service->status === false && $matchingSupport) {
             $service->status = true;
             $service->service = $args['service'];
 
             $service->save();
             return $service;
         }
+
+        throw new \Exception("Não é possível atualizar o serviço. Verifique o status e o suporte ID.");
     }
 }

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\GraphQL\Mutations\User;
 
-use App\GraphQL\Types\UserType;
-use App\Models\ServiceAreas;
+use App\Models\Support;
 use App\Models\User;
 use Closure;
 use Error;
@@ -14,8 +13,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use Illuminate\Support\Facades\DB;
 use Rebing\GraphQL\Support\Facades\GraphQL;
-use Rebing\GraphQL\Support\Mutation;
-use Rebing\GraphQL\Support\SelectFields;
+use Rebing\GraphQL\Support\Mutation;;
 
 class RegisterMutation extends Mutation
 {
@@ -77,7 +75,7 @@ class RegisterMutation extends Mutation
                 return new Error('O campo service_area é obrigatório para usuários de suporte.');
             }
             // Cria a área de serviço para o usuário de suporte
-            $newServiceArea = ServiceAreas::create([
+            $newServiceArea = Support::create([
                 'user_id' => $user->id,
                 'service_area' => $args['service_area'],
             ]);

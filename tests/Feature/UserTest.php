@@ -62,6 +62,30 @@ class UserTest extends TestCase
             ]);
     }
 
+    public function test_mutation_cadastroUsuario_support()
+    {
+        $userData = [
+            'name' => $this->faker->name,
+            'role' => "3",
+            'email' => $this->faker->unique()->safeEmail,
+            'password' => 'password123',
+            'service_area' => 'service,'
+        ];
+
+        $this->mutation('register', [
+            'name' => $userData['name'],
+            'role' => $userData['role'],
+            'email' => $userData['email'],
+            'password' => $userData['password'],
+            'service_area' => $userData['service_area'],
+        ], ['id', 'name', 'role', 'email'])
+            ->assertJson([
+                'data' => [
+                    'register' => null,
+                ],
+            ]);
+    }
+
     public function test_mutation_login_withValidData()
     {
         $user = User::factory()->create([
