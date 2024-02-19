@@ -11,6 +11,7 @@ use Closure;
 use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
+use phpDocumentor\Reflection\Types\Null_;
 use Rebing\GraphQL\Support\Facades\GraphQL;
 use Rebing\GraphQL\Support\Mutation;
 
@@ -66,13 +67,13 @@ class associateServiceMutation extends Mutation
             return $support->service_area === $service->service_area;
         });
 
-        if ($matchingSupport) {
+        if ($service->support_id === null && $matchingSupport) {
             $service->support_id = $matchingSupport->id;
             $service->save();
 
             return $service;
         }
 
-        return 'There is already an analyst responding to this service or the service area does not match any support.';
+        throw new \Exception('There is already an analyst responding to this service or the service area does not match any support.');
     }
 }

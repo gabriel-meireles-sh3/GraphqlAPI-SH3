@@ -49,7 +49,7 @@ class LoginMutation extends Mutation
         $token = JWTAuth::attempt($credentials);
 
         if ($token == null) {
-            throw new \Exception('Usuário ou senha inválidos.');
+            throw new \Exception('Invalid Emailr or password.');
         }
 
         return $token;

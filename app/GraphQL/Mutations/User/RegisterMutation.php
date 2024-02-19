@@ -72,7 +72,7 @@ class RegisterMutation extends Mutation
         if ($args['role'] == User::ROLE_SUPPORT) {
             // Verifica se service_area está presente
             if ($args['service_area'] == null) {
-                return new Error('O campo service_area é obrigatório para usuários de suporte.');
+                throw new \Exception('Field service_area required but not provided.');
             }
             // Cria a área de serviço para o usuário de suporte
             $newServiceArea = Support::create([
@@ -84,14 +84,14 @@ class RegisterMutation extends Mutation
                 DB::commit();
                 return $user;
             }else{
-                return new Error('Erro ao criar a área de serviço para o usuário de suporte.');
+                throw new \Exception('Error creating the service area for the support user.');
             }
         }else if ($user) {
             DB::commit();
             return $user;
         }else{
             DB::rollBack();
-            return new Error('Create error');
+            throw new \Exception('Create error');
         }
     }
 }

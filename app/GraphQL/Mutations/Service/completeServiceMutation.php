@@ -84,6 +84,6 @@ class completeServiceMutation extends Mutation
             return $service;
         }
 
-        throw new \Exception("Não é possível atualizar o serviço. Verifique o status e o suporte ID.");
+        throw new \Exception("Unable to update the service. Please check the status and support ID.");
     }
 }
