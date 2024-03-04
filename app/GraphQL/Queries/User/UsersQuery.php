@@ -49,11 +49,15 @@ class UsersQuery extends Query
     }
 
 
-    public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
+    public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, SelectFields $fields)
     {
+        // Obtenha os campos e relações selecionados
+        $select = $fields->getSelect();
+        $with = $fields->getRelations();
+
         $query = User::query();
 
-        $query->where('name', 'like', "%{$args['name']}%");
+        $query->select($select)->with($with)->where('name', 'like', "%{$args['name']}%");
 
         return $query->get();
     }

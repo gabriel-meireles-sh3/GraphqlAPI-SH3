@@ -54,9 +54,14 @@ class TicketQuery extends Query
         ];
     }
 
-    public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
+    public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, SelectFields $fields)
     {
+        // Obtenha os campos e relações selecionados
+        $select = $fields->getSelect();
+        $with = $fields->getRelations();
+
         $tickets = Ticket::findOrFail($args['id']);
+        $tickets::select($select)->with($with)->get();
 
         return $tickets;
     }

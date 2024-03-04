@@ -172,8 +172,10 @@ class ServiceTest extends TestCase
 
         User::factory()->create(['role' => User::ROLE_SUPPORT]);
         Support::factory()->create();
-        Ticket::factory()->create();
-        $service = Service::factory(5)->create();
+        $ticket = Ticket::factory()->create();
+        $service = Service::factory(5)->create([
+            'requester_name' => $ticket->name,
+        ]);
         $randomService = $service->random();
         $id = $randomService->id;
 
@@ -181,10 +183,9 @@ class ServiceTest extends TestCase
             ->query('service', ['id' => $id], ['id', 'requester_name', 'client_id', 'service_area', 'support_id'])
             ->assertJson([
                 'data' => [
-                    "service" => [
+                    'service' => [
                         'client_id' => $randomService->client_id,
                         'id' => $randomService->id,
-                        'requester_name' => $randomService->requester_name,
                         'service_area' => $randomService->service_area,
                         'support_id' => $randomService->support_id,
                     ],

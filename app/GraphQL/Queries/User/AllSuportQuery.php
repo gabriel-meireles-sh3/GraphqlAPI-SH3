@@ -36,10 +36,14 @@ class AllSuportQuery extends Query
         return Type::listOf(GraphQL::type('User'));
     }
 
-    public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
+    public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, SelectFields $fields)
     {
+        // Obtenha os campos e relações selecionados
+        $select = $fields->getSelect();
+        $with = $fields->getRelations();
+
         $query = User::query();
-        $query->where('role', User::ROLE_SUPPORT);
+        $query->where('role', User::ROLE_SUPPORT)->select($select)->with($with)->get();
 
         return $query->get();
     }

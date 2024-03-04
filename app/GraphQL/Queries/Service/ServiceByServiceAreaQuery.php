@@ -41,10 +41,15 @@ class ServiceByServiceAreaQuery extends Query
         return [];
     }
 
-    public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
+    public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, SelectFields $fields)
     {
-        $services_areas = Service::select('service_area')->get();
+        // Obtenha os campos e relações selecionados
+        $select = $fields->getSelect();
+        $with = $fields->getRelations();
 
-        return $services_areas;
+        // Use as informações obtidas para ajustar sua consulta
+        $services = Service::select($select)->with($with)->get();
+
+        return $services;
     }
 }

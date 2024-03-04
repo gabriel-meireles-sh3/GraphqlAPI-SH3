@@ -55,9 +55,13 @@ class ServicesBySupportIdQuery extends Query
         ];
     }
 
-    public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
+    public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, SelectFields $fields)
     {
-        $services = Service::where('support_id', $args['support_id'])->get();
+        // Obtenha os campos e relações selecionados
+        $select = $fields->getSelect();
+        $with = $fields->getRelations();
+
+        $services = Service::where('support_id', $args['support_id'])->select($select)->with($with)->get();
 
         if ($services->isEmpty()){
             return null;

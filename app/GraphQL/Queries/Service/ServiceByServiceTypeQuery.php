@@ -41,9 +41,13 @@ class ServiceByServiceTypeQuery extends Query
         return [];
     }
 
-    public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
+    public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, SelectFields $fields)
     {
-        $services = Service::where('status', true)->select('service')->get();
+        // Obtenha os campos e relações selecionados
+        $select = $fields->getSelect();
+        $with = $fields->getRelations();
+
+        $services = Service::where('status', true)->select($select)->with($with)->get();
 
         if ($services->isEmpty() || $services->contains('service', '')) {
             return null;

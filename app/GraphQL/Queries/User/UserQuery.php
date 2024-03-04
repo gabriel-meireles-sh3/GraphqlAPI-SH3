@@ -47,8 +47,15 @@ class UserQuery extends Query
         ];
     }
 
-    public function resolve($root, $args)
+    public function resolve($root, $args, $context, ResolveInfo $resolveInfo, SelectFields $fields)
     {
-        return User::findOrFail($args['id']);
+        // Obtenha os campos e relações selecionados
+        $select = $fields->getSelect();
+        $with = $fields->getRelations();
+        
+        $users = User::findOrFail($args['id']);
+        $users::select($select)->with($with)->get();
+
+        return $users;
     }
 }

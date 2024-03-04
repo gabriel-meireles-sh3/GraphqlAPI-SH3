@@ -42,9 +42,13 @@ class ServiceUnassociatedQuery extends Query
         return [];
     }
 
-    public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
+    public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, SelectFields $fields)
     {
-        $services = Service::where('support_id', NULL)->get();
+        // Obtenha os campos e relações selecionados
+        $select = $fields->getSelect();
+        $with = $fields->getRelations();
+
+        $services = Service::where('support_id', NULL)->select($select)->with($with)->get();
 
         if ($services && count($services) > 0){
             return $services;

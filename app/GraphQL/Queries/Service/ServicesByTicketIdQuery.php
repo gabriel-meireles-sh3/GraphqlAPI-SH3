@@ -55,9 +55,13 @@ class ServicesByTicketIdQuery extends Query
         ];
     }
 
-    public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
+    public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, SelectFields $fields)
     {
-        $services = Service::where('client_id', $args['ticket_id'])->get();
+        // Obtenha os campos e relações selecionados
+        $select = $fields->getSelect();
+        $with = $fields->getRelations();
+
+        $services = Service::where('client_id', $args['ticket_id'])->select($select)->with($with)->get();
 
         if ($services->isEmpty()){
             return null;
