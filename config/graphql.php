@@ -38,6 +38,12 @@ return [
                 'servicesTypes' => \App\GraphQL\Queries\Service\ServiceByServiceTypeQuery::class,
                 'servicesUnassociated' => \App\GraphQL\Queries\Service\ServiceUnassociatedQuery::class,
                 'servicesIncomplete' => \App\GraphQL\Queries\Service\ServiceIncompleteQuery::class,
+
+                //Relatorios
+                'rendimentoColetivo' => \App\GraphQL\Queries\Relatorios\CollectivePerformanceReportQuery::class,
+                'rendimentoIndividual' => \App\GraphQL\Queries\Relatorios\IndividualPerformanceReportQuery::class,
+                'TicketPorArea'=> \App\GraphQL\Queries\Relatorios\TicketsByAreaReportQuery::class,
+                'TicketPorEmpresa'=> \App\GraphQL\Queries\Relatorios\TicketsByCompanyReportQuery::class,
             ],
             'mutation' => [
                 // User
@@ -67,6 +73,12 @@ return [
         
                 'Ticket' => \App\GraphQL\Types\TicketType::class,
                 'Service' => \App\GraphQL\Types\ServiceType::class,
+
+                // Relatórios
+                'CollectivePerformance'=> \App\GraphQL\Types\CollectivePerformanceType::class,
+                'IndividualPerformance'=> \App\GraphQL\Types\IndividualPerformanceType::class,
+                'TicketsByAreaReport'=> \App\GraphQL\Types\TicketsByAreaReportType::class,
+                'TicketsByCompanyReport'=> \App\GraphQL\Types\TicketsByCompanyReportType::class,
             ],
 
             // Laravel HTTP middleware
